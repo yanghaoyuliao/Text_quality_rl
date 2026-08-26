@@ -41,12 +41,10 @@ installs `ms-swift` from the exact source revision used there.
 
 ## Download the models
 
-Pass the ModelScope token through the environment (it is never stored in this
-repository or in the command line):
+All three ModelScope repositories are public, so no ModelScope token is needed
+for downloading them:
 
 ```bash
-read -r -s MODELSCOPE_API_TOKEN
-export MODELSCOPE_API_TOKEN
 bash scripts/download_models.sh
 ```
 
@@ -55,6 +53,9 @@ This downloads the models and training data:
 - `LeonYoung/GenProve_sft_200`
 - `LeonYoung/paraphrase-multilingual-MiniLM-L12-v2`
 - `LeonYoung/en_rl_annotation_with_refs.jsonl`
+
+If a repository later becomes private or ModelScope requires authentication,
+export `MODELSCOPE_API_TOKEN` before running the script.
 
 ## Validate and train
 

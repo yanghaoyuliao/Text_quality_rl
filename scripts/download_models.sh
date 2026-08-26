@@ -16,11 +16,6 @@ if [[ ! -x "${MODELSCOPE_BIN}" ]]; then
     printf 'ModelScope CLI not found: %s\nRun %s first.\n' "${MODELSCOPE_BIN}" "${REPO_ROOT}/scripts/setup_grpo_env.sh" >&2
     exit 1
 fi
-if [[ -z "${MODELSCOPE_API_TOKEN:-}" ]]; then
-    printf 'Set MODELSCOPE_API_TOKEN before downloading the controlled model repositories.\n' >&2
-    exit 1
-fi
-
 mkdir -p "${MODEL_DIR}" "${RELEVANCE_MODEL_DIR}" "${DATASET_DIR}"
 
 "${MODELSCOPE_BIN}" download \
