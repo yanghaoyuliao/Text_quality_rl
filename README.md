@@ -23,9 +23,10 @@ By default, paths are relative to the repository root:
 | GRPO dataset | `data/train_data/en_rl_annotation_with_refs.jsonl` |
 | Training output | `models/rl_train_model` |
 
-The dataset is deliberately not committed to GitHub. Copy the authorized JSONL
-file to the default location, or set `GENPROVE_DATASET_PATH` to an alternate
-absolute or relative path before validation/training.
+The dataset is downloaded from the ModelScope repository
+`LeonYoung/en_rl_annotation_with_refs.jsonl` by `scripts/download_models.sh`.
+It is not committed to GitHub. The default download location is shown above;
+set `GENPROVE_DATASET_PATH` to use an alternate absolute or relative path.
 
 ## Install the environment
 
@@ -49,15 +50,16 @@ export MODELSCOPE_API_TOKEN
 bash scripts/download_models.sh
 ```
 
-This downloads:
+This downloads the models and training data:
 
 - `LeonYoung/GenProve_sft_200`
 - `LeonYoung/paraphrase-multilingual-MiniLM-L12-v2`
+- `LeonYoung/en_rl_annotation_with_refs.jsonl`
 
 ## Validate and train
 
-After placing the dataset at its default location (or exporting
-`GENPROVE_DATASET_PATH`):
+After downloading the models and dataset (or setting the corresponding path
+overrides):
 
 ```bash
 bash scripts/validate_grpo_inputs.sh
