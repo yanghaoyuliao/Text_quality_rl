@@ -1,0 +1,27 @@
+# Known-good training environment from Server1-V100.
+# Install with the CUDA 12.4 PyTorch index on an NVIDIA GPU server.
+--extra-index-url https://download.pytorch.org/whl/cu124
+
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+torchaudio==2.6.0
+transformers==5.8.1
+transformers-stream-generator==0.0.5
+trl==0.29.1
+sentence-transformers==5.6.0
+rouge-score==0.1.2
+datasets==4.8.4
+accelerate==1.13.0
+deepspeed==0.19.1
+peft==0.19.1
+modelscope==1.37.0
+safetensors==0.7.0
+numpy==2.2.6
+scipy==1.17.1
+scikit-learn==1.9.0
+einops==0.8.2
+swanlab==0.6.0
+vllm==0.8.5.post1
+
+# Install ms-swift from the exact source revision used for the original run.
+ms-swift @ git+https://github.com/modelscope/ms-swift.git@80698220d9c6fe737ab28a93e3e6ec33c52ab919

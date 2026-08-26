@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.py[cod]
+.cache/
+.modelscope/
+models/
+outputs/
+logs/
+*.log
+*.jsonl
+*.safetensors
+*.bin
+*.onnx
+*.h5
