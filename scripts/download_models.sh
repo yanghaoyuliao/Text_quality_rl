@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly PROJECT_ROOT="/usr/data/wjx/genprove_2"
-readonly ENV_DIR="${PROJECT_ROOT}/.venv"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd -P)"
+
+readonly ENV_DIR="${GENPROVE_ENV_DIR:-${REPO_ROOT}/.venv}"
 readonly MODELSCOPE_BIN="${ENV_DIR}/bin/modelscope"
-readonly MODEL_DIR="/usr/data/wjx/genprove_2/models/merge_model/GenProve_sft_200"
-readonly RELEVANCE_MODEL_DIR="/usr/data/wjx/trove/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+readonly MODEL_DIR="${GENPROVE_MODEL_PATH:-${REPO_ROOT}/models/merge_model/GenProve_sft_200}"
+readonly RELEVANCE_MODEL_DIR="${TEXT_QUALITY_RELEVANCE_MODEL:-${REPO_ROOT}/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}"
 
 if [[ ! -x "${MODELSCOPE_BIN}" ]]; then
-    printf 'ModelScope CLI not found: %s\nRun %s first.\n' "${MODELSCOPE_BIN}" "${PROJECT_ROOT}/scripts/setup_grpo_env.sh" >&2
+    printf 'ModelScope CLI not found: %s\nRun %s first.\n' "${MODELSCOPE_BIN}" "${REPO_ROOT}/scripts/setup_grpo_env.sh" >&2
     exit 1
 fi
 if [[ -z "${MODELSCOPE_API_TOKEN:-}" ]]; then

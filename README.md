@@ -1,37 +1,38 @@
 # Text-quality GRPO training
 
 This repository contains the standalone GRPO launcher and text-quality reward
-plugin used for the GenProve training run. The scripts intentionally use
-absolute paths so the deployment is deterministic on the target server.
+plugin used for the GenProve training run. Every script discovers the repository
+root from its own location, so the repository can be cloned to any directory.
 
-## Deployment layout
+## Deploy
 
-Clone this repository at exactly:
+Clone and enter the repository wherever you want it to live:
 
 ```bash
-git clone git@github.com:yanghaoyuliao/Text_quality_rl.git /usr/data/wjx/genprove_2
+git clone git@github.com:yanghaoyuliao/Text_quality_rl.git Text_quality_rl
+cd Text_quality_rl
 ```
 
-The scripts expect these absolute paths:
+By default, paths are relative to the repository root:
 
-| Resource | Path |
+| Resource | Default location |
 | --- | --- |
-| Python environment | `/usr/data/wjx/genprove_2/.venv` |
-| GRPO model | `/usr/data/wjx/genprove_2/models/merge_model/GenProve_sft_200` |
-| Similarity model | `/usr/data/wjx/trove/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` |
-| GRPO dataset | `/usr/data/wjx/genprove_2/data/train_data/en_rl_annotation_with_refs.jsonl` |
-| Training output | `/usr/data/wjx/genprove_2/models/rl_train_model` |
+| Python environment | `.venv` |
+| GRPO model | `models/merge_model/GenProve_sft_200` |
+| Similarity model | `models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` |
+| GRPO dataset | `data/train_data/en_rl_annotation_with_refs.jsonl` |
+| Training output | `models/rl_train_model` |
 
-The two model directories are downloaded from ModelScope. The training dataset
-is deliberately not committed to GitHub; place the authorized copy at the
-absolute path above before starting training.
+The dataset is deliberately not committed to GitHub. Copy the authorized JSONL
+file to the default location, or set `GENPROVE_DATASET_PATH` to an alternate
+absolute or relative path before validation/training.
 
 ## Install the environment
 
 On an NVIDIA server with CUDA 12.4:
 
 ```bash
-bash /usr/data/wjx/genprove_2/scripts/setup_grpo_env.sh
+bash scripts/setup_grpo_env.sh
 ```
 
 The dependency file pins the versions tested in the original environment and
@@ -39,12 +40,13 @@ installs `ms-swift` from the exact source revision used there.
 
 ## Download the models
 
-Read the access token without putting it in shell history, then run:
+Pass the ModelScope token through the environment (it is never stored in this
+repository or in the command line):
 
 ```bash
 read -r -s MODELSCOPE_API_TOKEN
 export MODELSCOPE_API_TOKEN
-bash /usr/data/wjx/genprove_2/scripts/download_models.sh
+bash scripts/download_models.sh
 ```
 
 This downloads:
@@ -54,25 +56,50 @@ This downloads:
 
 ## Validate and train
 
-After copying the dataset to the absolute path above:
+After placing the dataset at its default location (or exporting
+`GENPROVE_DATASET_PATH`):
 
 ```bash
-bash /usr/data/wjx/genprove_2/scripts/validate_grpo_inputs.sh
-bash /usr/data/wjx/genprove_2/code/training/grpo_multiturn.sh
+bash scripts/validate_grpo_inputs.sh
+bash code/training/grpo_multiturn.sh
 ```
 
 The launcher uses eight GPUs (`CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7`),
 DeepSpeed ZeRO-3, LoRA, and the `text_quality_reward` plugin. Set
 `SWANLAB_API_KEY` if the SwanLab account requires authenticated logging.
 
+## Path overrides
+
+All defaults can be overridden without editing scripts:
+
+| Variable | Applies to |
+| --- | --- |
+| `GENPROVE_ENV_DIR` | Python environment and launchers |
+| `GENPROVE_REQUIREMENTS_FILE` | Dependency file |
+| `GENPROVE_MODEL_PATH` | GRPO model |
+| `TEXT_QUALITY_RELEVANCE_MODEL` | Similarity model |
+| `GENPROVE_DATASET_PATH` | Training dataset |
+| `GENPROVE_OUTPUT_DIR` | Training output |
+| `GENPROVE_REWARD_PLUGIN` | Reward plugin |
+
+For example, to keep models and data outside the clone:
+
+```bash
+export GENPROVE_MODEL_PATH=/data/models/GenProve_sft_200
+export TEXT_QUALITY_RELEVANCE_MODEL=/data/models/paraphrase-multilingual-MiniLM-L12-v2
+export GENPROVE_DATASET_PATH=/data/train/en_rl_annotation_with_refs.jsonl
+export GENPROVE_OUTPUT_DIR=/data/models/rl_train_model
+bash scripts/validate_grpo_inputs.sh
+bash code/training/grpo_multiturn.sh
+```
+
 ## Files
 
-- `code/training/grpo_multiturn.sh`: absolute-path training launcher.
+- `code/training/grpo_multiturn.sh`: portable training launcher.
 - `code/training/Text_quality_only_annotation.py`: sentence-level similarity
   and ROUGE-L reward.
 - `requirements-training.txt`: pinned GPU training dependencies.
-- `scripts/setup_grpo_env.sh`: creates `/usr/data/wjx/genprove_2/.venv` and
-  installs dependencies.
+- `scripts/setup_grpo_env.sh`: creates the virtual environment and installs dependencies.
 - `scripts/download_models.sh`: downloads both ModelScope models.
 - `scripts/validate_grpo_inputs.sh`: checks paths and runs a similarity-model
   embedding smoke test.

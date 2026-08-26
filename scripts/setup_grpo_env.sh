@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-readonly PROJECT_ROOT="/usr/data/wjx/genprove_2"
-readonly ENV_DIR="${PROJECT_ROOT}/.venv"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd -P)"
+
+readonly ENV_DIR="${GENPROVE_ENV_DIR:-${REPO_ROOT}/.venv}"
 readonly PYTHON_BIN="${ENV_DIR}/bin/python"
-readonly REQUIREMENTS_FILE="${PROJECT_ROOT}/requirements-training.txt"
+readonly REQUIREMENTS_FILE="${GENPROVE_REQUIREMENTS_FILE:-${REPO_ROOT}/requirements-training.txt}"
 
 if [[ ! -f "${REQUIREMENTS_FILE}" ]]; then
     printf 'Missing requirements file: %s\n' "${REQUIREMENTS_FILE}" >&2

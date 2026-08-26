@@ -1,6 +1,8 @@
 import re
 import logging
+import os
 from typing import List, Dict, Tuple, Optional
+from pathlib import Path
 import torch
 try:
     from swift.plugin import ORM, orms
@@ -12,7 +14,11 @@ from rouge_score import rouge_scorer
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-RELEVANCE_MODEL = "/usr/data/wjx/trove/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+RELEVANCE_MODEL = os.environ.get(
+    "TEXT_QUALITY_RELEVANCE_MODEL",
+    str(REPO_ROOT / "models" / "sentence-transformers" / "paraphrase-multilingual-MiniLM-L12-v2"),
+)
 
 class TextQualityRewardModel(ORM):
     """

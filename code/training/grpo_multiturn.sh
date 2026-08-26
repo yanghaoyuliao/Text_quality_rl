@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This repository is deployed at this absolute path on the training server.
-readonly ENV_DIR="/usr/data/wjx/genprove_2/.venv"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd -P)"
+
+readonly ENV_DIR="${GENPROVE_ENV_DIR:-${REPO_ROOT}/.venv}"
 readonly SWIFT_BIN="${ENV_DIR}/bin/swift"
-readonly MODEL_PATH="/usr/data/wjx/genprove_2/models/merge_model/GenProve_sft_200"
-readonly REWARD_PLUGIN="/usr/data/wjx/genprove_2/code/training/Text_quality_only_annotation.py"
-readonly DATASET_PATH="/usr/data/wjx/genprove_2/data/train_data/en_rl_annotation_with_refs.jsonl"
-readonly OUTPUT_DIR="/usr/data/wjx/genprove_2/models/rl_train_model"
+readonly MODEL_PATH="${GENPROVE_MODEL_PATH:-${REPO_ROOT}/models/merge_model/GenProve_sft_200}"
+readonly REWARD_PLUGIN="${GENPROVE_REWARD_PLUGIN:-${REPO_ROOT}/code/training/Text_quality_only_annotation.py}"
+readonly DATASET_PATH="${GENPROVE_DATASET_PATH:-${REPO_ROOT}/data/train_data/en_rl_annotation_with_refs.jsonl}"
+readonly OUTPUT_DIR="${GENPROVE_OUTPUT_DIR:-${REPO_ROOT}/models/rl_train_model}"
 
 for required_path in "${SWIFT_BIN}" "${MODEL_PATH}" "${REWARD_PLUGIN}" "${DATASET_PATH}"; do
     if [[ ! -e "${required_path}" ]]; then
